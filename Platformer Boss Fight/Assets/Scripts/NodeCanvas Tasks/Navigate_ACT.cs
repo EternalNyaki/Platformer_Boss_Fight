@@ -9,18 +9,7 @@ namespace NodeCanvas.Tasks.Actions
 
 	public class Navigate_ACT : ActionTask
 	{
-
-		//Maximum walking speed (in units per second)
-		public BBParameter<float> maxSpeed;
-		//Time to reach maximum speed (in seconds)
-		public BBParameter<float> accelerationTime;
-
-		//Maximum apex jump height (in units)
-		public BBParameter<float> apexHeight;
-		//Time to reach maximum apex jump height (in seconds)
-		public BBParameter<float> apexTime;
-		//Terminal speed when falling (in units/s)
-		public BBParameter<float> terminalVelocity;
+		public BBParameter<PlatformerControllerParams> movementParams;
 
 		public BBParameter<float> destinationReachedThreshold;
 
@@ -29,25 +18,10 @@ namespace NodeCanvas.Tasks.Actions
 		public BBParameter<bool> pathCalculationCompleteTrigger;
 		public BBParameter<bool> destinationReachedTrigger;
 
-		public BBParameter<Vector2> groundCheckOffset;
-		public BBParameter<Vector2> groundCheckSize;
-		public BBParameter<LayerMask> groundMask;
+		public float movementFailureWaitTime = 5f;
 
 		private int _nextNodeIndex = 0;
-
-		//The player's horizontal acceleration (in units/s^2)
-		//Derived from the player's maximum walking speed and time to reach maximum walking speed
-		private float _acceleration;
-		//The minimum amount of movement for the player to be considered moving
-		//Used to stop the player from vibrating endlessly instead of stopping
-		private float _minMovementTolerance;
-
-		//The player's vertical acceleration due to gravity (in units/s^2)
-		//Derived from the player's maximum apex height and time to reach maximum apex height
-		private float _gravity;
-		//The initial vertical speed of the player's jump (in units/s)
-		//Derived from the player's maximum apex height and time to reach maximum apex height
-		private float _jumpVelocity;
+		private float _previousNodeReachedTime;
 
 		private PlayerController.FacingDirection _direction;
 
@@ -78,12 +52,6 @@ namespace NodeCanvas.Tasks.Actions
 			_xMovementHash = Animator.StringToHash("xMovement");
 			_yMovementHash = Animator.StringToHash("yMovement");
 			_groundedHash = Animator.StringToHash("grounded");
-
-			//Calculate movement values
-			_acceleration = maxSpeed.value / accelerationTime.value;
-			_gravity = -2 * apexHeight.value / Mathf.Pow(apexTime.value, 2);
-			_jumpVelocity = 2 * apexHeight.value / apexTime.value;
-			_minMovementTolerance = _acceleration * Time.deltaTime * 2;
 
 			return null;
 		}
@@ -136,6 +104,7 @@ namespace NodeCanvas.Tasks.Actions
 			Debug.DrawLine(_path.endPoint, _path.originalEndPoint, Color.magenta, 2f);
 
 			_nextNodeIndex = 0;
+			_previousNodeReachedTime = Time.time;
 			pathCalculationCompleteTrigger.value = true;
 		}
 
@@ -164,12 +133,6 @@ namespace NodeCanvas.Tasks.Actions
 
 			if (_nextNodeIndex > 0)
 			{
-				// NodeLink2 jumpLink = NodeLink2.GetNodeLink(_path.path[_nextNodeIndex - 1]);
-				// if (jumpLink != null)
-				// {
-				// 	fakeInput.y = 1f;
-				// }
-
 				if (nodePosition.y > ((Vector3)_path.path[_nextNodeIndex - 1].position).y &&
 					nodePosition.y > playerPosition.y - 0.25f)
 				{
@@ -178,6 +141,13 @@ namespace NodeCanvas.Tasks.Actions
 			}
 
 			fakeInput.x = playerPosition.x < nodePosition.x ? 1f : -1f;
+
+			if (Time.time > _previousNodeReachedTime + movementFailureWaitTime)
+			{
+				destinationReachedTrigger.value = true;
+				_path = null;
+				Debug.LogWarning("Could not complete path");
+			}
 
 			return fakeInput;
 		}
@@ -200,7 +170,7 @@ namespace NodeCanvas.Tasks.Actions
 		{
 			if (horizontalInput == 0)
 			{
-				if (xVelocity < _minMovementTolerance && xVelocity > -_minMovementTolerance)
+				if (xVelocity < movementParams.value.minMovementTolerance && xVelocity > -movementParams.value.minMovementTolerance)
 				{
 					//Do nothing
 					xVelocity = 0f;
@@ -208,13 +178,13 @@ namespace NodeCanvas.Tasks.Actions
 				else
 				{
 					//Decelerate
-					xVelocity = Mathf.Clamp(-Mathf.Sign(xVelocity) * _acceleration * Time.deltaTime, -maxSpeed.value, maxSpeed.value);
+					xVelocity = Mathf.Clamp(-Mathf.Sign(xVelocity) * movementParams.value.acceleration * Time.deltaTime, -movementParams.value.maxSpeed, movementParams.value.maxSpeed);
 				}
 			}
 			else
 			{
 				//Accelerate
-				xVelocity = Mathf.Clamp(xVelocity + horizontalInput * _acceleration * Time.deltaTime, -maxSpeed.value, maxSpeed.value);
+				xVelocity = Mathf.Clamp(xVelocity + horizontalInput * movementParams.value.acceleration * Time.deltaTime, -movementParams.value.maxSpeed, movementParams.value.maxSpeed);
 
 				//Change facing direction
 				if (horizontalInput > 0)
@@ -234,7 +204,7 @@ namespace NodeCanvas.Tasks.Actions
 			if (!IsGrounded())
 			{
 				//Calculate gravity
-				yVelocity = Mathf.Clamp(yVelocity + _gravity * Time.deltaTime, -terminalVelocity.value, float.PositiveInfinity);
+				yVelocity = Mathf.Clamp(yVelocity + movementParams.value.gravity * Time.deltaTime, -movementParams.value.terminalVelocity, float.PositiveInfinity);
 			}
 
 			if (verticalInput > 0f && IsGrounded())
@@ -251,7 +221,7 @@ namespace NodeCanvas.Tasks.Actions
 
 		private void Jump(ref float yVelocity)
 		{
-			yVelocity = _jumpVelocity;
+			yVelocity = movementParams.value.jumpVelocity;
 		}
 
 		private void AnimUpdate()
@@ -307,7 +277,7 @@ namespace NodeCanvas.Tasks.Actions
 		//meaning it can return a false positive when jumping through one-way platforms
 		private bool IsOnGround()
 		{
-			return Physics2D.OverlapBox((Vector2)agent.transform.position + groundCheckOffset.value, groundCheckSize.value, 0f, groundMask.value);
+			return Physics2D.OverlapBox((Vector2)agent.transform.position + movementParams.value.groundCheckRect.position, movementParams.value.groundCheckRect.size, 0f, movementParams.value.groundMask);
 		}
 
 		//Called when the task is disabled.
