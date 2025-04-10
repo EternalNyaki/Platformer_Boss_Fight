@@ -18,45 +18,12 @@ public class PlayerController : MonoBehaviour
     //HACK: Unused functionality to demonstrate death animation
     public int health = 10;
 
-    //Maximum walking speed (in units per second)
-    public float maxSpeed = 7f;
-    //Time to reach maximum speed (in seconds)
-    public float accelerationTime = 0.1f;
-
-    //Maximum apex jump height (in units)
-    public float apexHeight = 2.5f;
-    //Time to reach maximum apex jump height (in seconds)
-    public float apexTime = 0.33f;
-    //Terminal speed when falling (in units/s)
-    public float terminalVelocity = 20f;
-
-    //The duration of time during which the player can still jump after leaving the ground (in seconds)
-    public float coyoteTime = 0.13f;
-
-    //Size and offset of BoxCast to check for terrain below the player
-    public Vector2 groundCheckSize, groundCheckOffset;
-
-    //Layermask for terrain the player can walk on and wall jump off of
-    public LayerMask groundMask;
+    public PlatformerControllerParams movementParams;
 
     //Vector for storing directional input
     private Vector2 _playerInput;
     //The direction the player is facing
     private FacingDirection _direction = FacingDirection.right;
-
-    //The player's horizontal acceleration (in units/s^2)
-    //Derived from the player's maximum walking speed and time to reach maximum walking speed
-    private float _acceleration;
-    //The minimum amount of movement for the player to be considered moving
-    //Used to stop the player from vibrating endlessly instead of stopping
-    private float _minMovementTolerance;
-
-    //The player's vertical acceleration due to gravity (in units/s^2)
-    //Derived from the player's maximum apex height and time to reach maximum apex height
-    private float _gravity;
-    //The initial vertical speed of the player's jump (in units/s)
-    //Derived from the player's maximum apex height and time to reach maximum apex height
-    private float _jumpVelocity;
 
     //Booleans from storing player input between Update() and FixedUpdate()
     private bool _jumpTrigger, _jumpReleaseTrigger;
@@ -84,12 +51,6 @@ public class PlayerController : MonoBehaviour
         _rb2d = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
-
-        //Calculate movement values
-        _acceleration = maxSpeed / accelerationTime;
-        _gravity = -2 * apexHeight / Mathf.Pow(apexTime, 2);
-        _jumpVelocity = 2 * apexHeight / apexTime;
-        _minMovementTolerance = _acceleration * Time.deltaTime * 2;
 
         xMovementHash = Animator.StringToHash("xMovement");
         yMovementHash = Animator.StringToHash("yMovement");
@@ -178,7 +139,7 @@ public class PlayerController : MonoBehaviour
     {
         if (horizontalInput == 0)
         {
-            if (xVelocity < _minMovementTolerance && xVelocity > -_minMovementTolerance)
+            if (xVelocity < movementParams.minMovementTolerance && xVelocity > -movementParams.minMovementTolerance)
             {
                 //Do nothing
                 xVelocity = 0f;
@@ -186,13 +147,13 @@ public class PlayerController : MonoBehaviour
             else
             {
                 //Decelerate
-                xVelocity = Mathf.Clamp(-Mathf.Sign(xVelocity) * _acceleration * Time.deltaTime, -maxSpeed, maxSpeed);
+                xVelocity = Mathf.Clamp(-Mathf.Sign(xVelocity) * movementParams.acceleration * Time.deltaTime, -movementParams.maxSpeed, movementParams.maxSpeed);
             }
         }
         else
         {
             //Accelerate
-            xVelocity = Mathf.Clamp(xVelocity + horizontalInput * _acceleration * Time.deltaTime, -maxSpeed, maxSpeed);
+            xVelocity = Mathf.Clamp(xVelocity + horizontalInput * movementParams.acceleration * Time.deltaTime, -movementParams.maxSpeed, movementParams.maxSpeed);
 
             //Change facing direction
             if (horizontalInput > 0)
@@ -209,13 +170,10 @@ public class PlayerController : MonoBehaviour
     //Calculate vertical movement (gravity and jumping)
     private void VerticalMovement(float verticalInput, ref float yVelocity)
     {
-        if (!IsGrounded())
-        {
-            //Calculate gravity
-            yVelocity = Mathf.Clamp(yVelocity + _gravity * Time.deltaTime, -terminalVelocity, float.PositiveInfinity);
-        }
+        //Calculate gravity
+        yVelocity = Mathf.Clamp(yVelocity + movementParams.gravity * Time.deltaTime, -movementParams.terminalVelocity, float.PositiveInfinity);
 
-        if (_jumpTrigger && (IsGrounded() || _timeSinceLastGrounded < coyoteTime))
+        if (_jumpTrigger && (IsGrounded() || _timeSinceLastGrounded < movementParams.coyoteTime))
         {
             //Jump
             Jump(ref yVelocity);
@@ -229,7 +187,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump(ref float yVelocity)
     {
-        yVelocity = _jumpVelocity;
+        yVelocity = movementParams.jumpVelocity;
     }
 
     public void Die()
@@ -265,7 +223,7 @@ public class PlayerController : MonoBehaviour
     //meaning it can return a false positive when jumping through one-way platforms
     private bool IsOnGround()
     {
-        return Physics2D.OverlapBox((Vector2)transform.position + groundCheckOffset, groundCheckSize, 0f, groundMask);
+        return Physics2D.OverlapBox((Vector2)transform.position + movementParams.groundCheckRect.position, movementParams.groundCheckRect.size, 0f, movementParams.groundMask);
     }
 
     //Returns true if the player's health is 0

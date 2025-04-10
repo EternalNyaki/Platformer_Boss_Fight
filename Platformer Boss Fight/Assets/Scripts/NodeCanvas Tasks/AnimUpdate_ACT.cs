@@ -10,9 +10,7 @@ namespace NodeCanvas.Tasks.Actions
 	public class AnimUpdate_ACT : ActionTask
 	{
 
-		public BBParameter<Vector2> groundCheckOffset;
-		public BBParameter<Vector2> groundCheckSize;
-		public BBParameter<LayerMask> groundMask;
+		public BBParameter<PlatformerControllerParams> movementParams;
 
 		private PlayerController.FacingDirection _direction;
 
@@ -111,7 +109,7 @@ namespace NodeCanvas.Tasks.Actions
 		//meaning it can return a false positive when jumping through one-way platforms
 		private bool IsOnGround()
 		{
-			return Physics2D.OverlapBox((Vector2)agent.transform.position + groundCheckOffset.value, groundCheckSize.value, 0f, groundMask.value);
+			return Physics2D.OverlapBox((Vector2)agent.transform.position + movementParams.value.groundCheckRect.position, movementParams.value.groundCheckRect.size, 0f, movementParams.value.groundMask);
 		}
 	}
 }

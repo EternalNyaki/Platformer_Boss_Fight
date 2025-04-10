@@ -134,7 +134,7 @@ namespace NodeCanvas.Tasks.Actions
 			if (_nextNodeIndex > 0)
 			{
 				if (nodePosition.y > ((Vector3)_path.path[_nextNodeIndex - 1].position).y &&
-					nodePosition.y > playerPosition.y - 0.25f)
+					nodePosition.y > playerPosition.y)
 				{
 					fakeInput.y = 1f;
 				}
@@ -201,11 +201,8 @@ namespace NodeCanvas.Tasks.Actions
 		//Calculate vertical movement (gravity and jumping)
 		private void VerticalMovement(float verticalInput, ref float yVelocity)
 		{
-			if (!IsGrounded())
-			{
-				//Calculate gravity
-				yVelocity = Mathf.Clamp(yVelocity + movementParams.value.gravity * Time.deltaTime, -movementParams.value.terminalVelocity, float.PositiveInfinity);
-			}
+			//Calculate gravity
+			yVelocity = Mathf.Clamp(yVelocity + movementParams.value.gravity * Time.deltaTime, -movementParams.value.terminalVelocity, float.PositiveInfinity);
 
 			if (verticalInput > 0f && IsGrounded())
 			{

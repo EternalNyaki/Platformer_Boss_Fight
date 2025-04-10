@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public struct PlatformerControllerParams
 {
     //Maximum walking speed (in units per second)
@@ -15,6 +16,9 @@ public struct PlatformerControllerParams
 
     //Maximum vertical speed of the character while falling (in units/s)
     public float terminalVelocity;
+    //The duration of time during which the character can still jump after leaving the ground (in seconds)
+    public float coyoteTime;
+
     //Rect within which to check for terrain below the character, used to check if the character is grounded
     public Rect groundCheckRect;
     //Layer Mask for terrain to check if the character is grounded
