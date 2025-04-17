@@ -40,60 +40,60 @@ namespace NodeCanvas.Tasks.Actions
 		//Called once per frame while the action is active.
 		protected override void OnUpdate()
 		{
-			if (_attackTimer >= attackData.data[attackData.data.Length - 1].timing)
-			{
-				EndAction(true);
-			}
-			else if (_telegraphTimer >= waitTime)
-			{
-				Attack();
-			}
-			else
-			{
-				Telegraph();
-			}
+			// if (_attackTimer >= attackData.data[attackData.data.Length - 1].timing)
+			// {
+			// 	EndAction(true);
+			// }
+			// else if (_telegraphTimer >= waitTime)
+			// {
+			// 	Attack();
+			// }
+			// else
+			// {
+			// 	Telegraph();
+			// }
 		}
 
 		private void Telegraph()
 		{
-			_telegraphTimer += Time.deltaTime;
+			// _telegraphTimer += Time.deltaTime;
 
-			for (int i = attackData.data.Length - 1; i >= 0; i--)
-			{
-				if (_telegraphTimer >= attackData.data[i].timing && _telegraphSpriteObjects.Count <= i)
-				{
-					_telegraphSpriteObjects.Add(GameObject.Instantiate(telegraphSpritePrefab));
-					_telegraphSpriteObjects[_telegraphSpriteObjects.Count - 1].transform.position = attackData.data[i].hitboxRect.position;
-					_telegraphSpriteObjects[_telegraphSpriteObjects.Count - 1].transform.localScale = attackData.data[i].hitboxRect.size;
-					_telegraphSpriteObjects[_telegraphSpriteObjects.Count - 1].transform.rotation = Quaternion.Euler(new(0f, 0f, attackData.data[i].hitboxRotation));
+			// for (int i = attackData.data.Length - 1; i >= 0; i--)
+			// {
+			// 	if (_telegraphTimer >= attackData.data[i].timing && _telegraphSpriteObjects.Count <= i)
+			// 	{
+			// 		_telegraphSpriteObjects.Add(GameObject.Instantiate(telegraphSpritePrefab));
+			// 		_telegraphSpriteObjects[_telegraphSpriteObjects.Count - 1].transform.position = attackData.data[i].hitboxRect.position;
+			// 		_telegraphSpriteObjects[_telegraphSpriteObjects.Count - 1].transform.localScale = attackData.data[i].hitboxRect.size;
+			// 		_telegraphSpriteObjects[_telegraphSpriteObjects.Count - 1].transform.rotation = Quaternion.Euler(new(0f, 0f, attackData.data[i].hitboxRotation));
 
-					break;
-				}
-			}
+			// 		break;
+			// 	}
+			// }
 		}
 
 		private void Attack()
 		{
-			_attackTimer += Time.deltaTime;
+			// _attackTimer += Time.deltaTime;
 
-			for (int i = attackData.data.Length - 1; i >= 0; i--)
-			{
-				if (_attackTimer >= attackData.data[i].timing && _telegraphSpriteObjects.Count >= attackData.data.Length - i)
-				{
-					if (_telegraphSpriteObjects[0] != null)
-					{
-						GameObject.Destroy(_telegraphSpriteObjects[0]);
-						_telegraphSpriteObjects.RemoveAt(0);
-					}
+			// for (int i = attackData.data.Length - 1; i >= 0; i--)
+			// {
+			// 	if (_attackTimer >= attackData.data[i].timing && _telegraphSpriteObjects.Count >= attackData.data.Length - i)
+			// 	{
+			// 		if (_telegraphSpriteObjects[0] != null)
+			// 		{
+			// 			GameObject.Destroy(_telegraphSpriteObjects[0]);
+			// 			_telegraphSpriteObjects.RemoveAt(0);
+			// 		}
 
-					Transform t = GameObject.Instantiate(attackSpritePrefab).transform;
-					t.position = attackData.data[i].hitboxRect.position;
-					t.localScale = attackData.data[i].hitboxRect.size;
-					t.rotation = Quaternion.Euler(new(0f, 0f, attackData.data[i].hitboxRotation));
+			// 		Transform t = GameObject.Instantiate(attackSpritePrefab).transform;
+			// 		t.position = attackData.data[i].hitboxRect.position;
+			// 		t.localScale = attackData.data[i].hitboxRect.size;
+			// 		t.rotation = Quaternion.Euler(new(0f, 0f, attackData.data[i].hitboxRotation));
 
-					break;
-				}
-			}
+			// 		break;
+			// 	}
+			// }
 		}
 
 		//Called when the task is disabled.

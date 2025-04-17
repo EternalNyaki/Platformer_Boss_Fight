@@ -30,7 +30,7 @@ namespace NodeCanvas.Tasks.Actions
 		//EndAction can be called from anywhere.
 		protected override void OnExecute()
 		{
-			destination.value = Random.insideUnitCircle.normalized * wanderRange;
+			destination.value = (Vector2)agent.transform.position + Random.insideUnitCircle.normalized * wanderRange;
 			calculatePathTrigger.value = true;
 
 			EndAction(true);

@@ -1,10 +1,14 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using Unity.VisualScripting;
 
-public class PlayerController : MonoBehaviour
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+public class PlayerController : DamagableObject
 {
     /// <summary>
     /// Describes the direction the player is facing
@@ -14,11 +18,17 @@ public class PlayerController : MonoBehaviour
         left = -1, right = 1
     }
 
-    //Player health, only used to trigger death animation
-    //HACK: Unused functionality to demonstrate death animation
-    public int health = 10;
+    public bool disableControls = false;
 
     public PlatformerControllerParams movementParams;
+
+#if UNITY_EDITOR
+    public Sprite[] attack1Sprites;
+    public Sprite[] attack2Sprites;
+#endif
+
+    public AttackFrame[] attack1Hitboxes;
+    public AttackFrame[] attack2Hitboxes;
 
     //Vector for storing directional input
     private Vector2 _playerInput;
@@ -27,6 +37,7 @@ public class PlayerController : MonoBehaviour
 
     //Booleans from storing player input between Update() and FixedUpdate()
     private bool _jumpTrigger, _jumpReleaseTrigger;
+    private bool _attackInput;
 
     //Amount of time since the player was last grounded
     //Used for coyote time
@@ -36,17 +47,18 @@ public class PlayerController : MonoBehaviour
     //Used to calculate camera shake intensity when landing
     private float _prevFallingSpeed = 0f;
 
-    //Reference to the player's Rigidbody
-    private Rigidbody2D _rb2d;
+    private Coroutine _motionOverrideCoroutine = null;
+    private bool _endOverrideCoroutineTrigger = false;
 
     private SpriteRenderer _spriteRenderer;
     private Animator _animator;
 
-    private int xMovementHash, yMovementHash, groundedHash;
+    private int xMovementHash, yMovementHash, groundedHash, attackHash, hitHash, healthHash;
 
-    // Start is called before the first frame update
-    void Start()
+    protected override void Initialize()
     {
+        base.Initialize();
+
         //Get component references
         _rb2d = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -55,24 +67,15 @@ public class PlayerController : MonoBehaviour
         xMovementHash = Animator.StringToHash("xMovement");
         yMovementHash = Animator.StringToHash("yMovement");
         groundedHash = Animator.StringToHash("grounded");
+        attackHash = Animator.StringToHash("attack");
+        hitHash = Animator.StringToHash("hit");
+        healthHash = Animator.StringToHash("health");
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Get directional input
-        _playerInput.x = Input.GetAxisRaw("Horizontal");
-        _playerInput.y = Input.GetAxisRaw("Vertical");
-        _playerInput.Normalize();
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            _jumpTrigger = true;
-        }
-        else if (Input.GetKeyUp(KeyCode.Space))
-        {
-            _jumpReleaseTrigger = true;
-        }
+        if (!disableControls) { GetInputs(); }
 
         //Set previous falling speed
         if (_rb2d.velocity.y < 0)
@@ -93,11 +96,32 @@ public class PlayerController : MonoBehaviour
         AnimUpdate();
     }
 
+    private void GetInputs()
+    {
+        //Get directional input
+        _playerInput.x = Input.GetAxisRaw("Horizontal");
+        _playerInput.y = Input.GetAxisRaw("Vertical");
+        _playerInput.Normalize();
+
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.C))
+        {
+            _jumpTrigger = true;
+        }
+        else if (Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.C))
+        {
+            _jumpReleaseTrigger = true;
+        }
+
+        _attackInput = (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.X)) && IsGrounded();
+    }
+
     private void AnimUpdate()
     {
         _animator.SetFloat(xMovementHash, Mathf.Abs(_rb2d.velocity.x));
         _animator.SetFloat(yMovementHash, _rb2d.velocity.y);
         _animator.SetBool(groundedHash, IsGrounded());
+        if (_attackInput) { _animator.SetTrigger(attackHash); }
+        _animator.SetInteger(healthHash, _health);
 
         //Flip the player sprite based on facing direction
         switch (GetFacingDirection())
@@ -124,6 +148,8 @@ public class PlayerController : MonoBehaviour
     //Update movement and apply physics (called in FixedUpdate())
     private void MovementUpdate(Vector2 playerInput)
     {
+        if (_motionOverrideCoroutine != null) { return; }
+
         Vector2 velocity = _rb2d.velocity;
 
         //Calculate movement
@@ -132,6 +158,8 @@ public class PlayerController : MonoBehaviour
 
         //Apply movement
         _rb2d.velocity = velocity;
+
+        ApplyGravity();
     }
 
     //Calculate horizontal movement (horizontal input)
@@ -170,9 +198,6 @@ public class PlayerController : MonoBehaviour
     //Calculate vertical movement (gravity and jumping)
     private void VerticalMovement(float verticalInput, ref float yVelocity)
     {
-        //Calculate gravity
-        yVelocity = Mathf.Clamp(yVelocity + movementParams.gravity * Time.deltaTime, -movementParams.terminalVelocity, float.PositiveInfinity);
-
         if (_jumpTrigger && (IsGrounded() || _timeSinceLastGrounded < movementParams.coyoteTime))
         {
             //Jump
@@ -190,9 +215,102 @@ public class PlayerController : MonoBehaviour
         yVelocity = movementParams.jumpVelocity;
     }
 
-    public void Die()
+    private void ApplyGravity()
     {
-        gameObject.SetActive(false);
+        //Calculate gravity
+        _rb2d.velocity = new Vector2(_rb2d.velocity.x, Mathf.Clamp(_rb2d.velocity.y + movementParams.gravity * Time.deltaTime, -movementParams.terminalVelocity, float.PositiveInfinity));
+    }
+
+    public void EndOverrideAction()
+    {
+        _endOverrideCoroutineTrigger = true;
+        _motionOverrideCoroutine = null;
+    }
+
+    private bool GetEndOverrideCoroutine()
+    {
+        bool output = _endOverrideCoroutineTrigger;
+        _endOverrideCoroutineTrigger = false;
+        return output;
+    }
+
+    private IEnumerator AttackRoutine()
+    {
+        _rb2d.velocity = new Vector2(0f, _rb2d.velocity.y);
+        while (!GetEndOverrideCoroutine())
+        {
+            ApplyGravity();
+            yield return null;
+        }
+    }
+
+    private IEnumerator HurtRoutine()
+    {
+        //Apply knockback
+        while (!GetEndOverrideCoroutine())
+        {
+            ApplyGravity();
+            yield return null;
+        }
+    }
+
+    private IEnumerator DieRoutine()
+    {
+        _rb2d.velocity = Vector2.zero;
+        yield return new WaitUntil(GetEndOverrideCoroutine);
+        Application.Quit();
+    }
+
+    public void Attack()
+    {
+        _motionOverrideCoroutine = StartCoroutine(AttackRoutine());
+    }
+
+    public void CheckAttackHitboxFrame(int frame)
+    {
+        AttackHitbox[] attackFrameHitboxes;
+
+        if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+        {
+            attackFrameHitboxes = attack1Hitboxes[frame].hitboxes;
+        }
+        else if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2"))
+        {
+            attackFrameHitboxes = attack2Hitboxes[frame].hitboxes;
+        }
+        else
+        {
+            return;
+        }
+
+        foreach (AttackHitbox hbox in attackFrameHitboxes)
+        {
+            foreach (Collider2D collider in Physics2D.OverlapBoxAll((Vector2)transform.position + new Vector2(hbox.rect.position.x * (int)_direction, hbox.rect.position.y), hbox.rect.size, hbox.rotation))
+            {
+                DamagableObject dobj = collider.GetComponent<DamagableObject>();
+                if (dobj != null && collider.gameObject != gameObject)
+                {
+                    dobj.Hurt(hbox.damage, new Vector2(hbox.knockback.x * (int)_direction, hbox.knockback.y));
+                }
+            }
+        }
+    }
+
+    public void Hurt()
+    {
+        _motionOverrideCoroutine = StartCoroutine(HurtRoutine());
+    }
+
+    public override void Hurt(int damage, Vector2 knockback)
+    {
+        base.Hurt(damage, knockback);
+
+        _animator.SetTrigger(hitHash);
+    }
+
+    protected override void Die()
+    {
+        _motionOverrideCoroutine = StartCoroutine(DieRoutine());
     }
 
     //Returns true if the player is moving horizontally
@@ -226,12 +344,6 @@ public class PlayerController : MonoBehaviour
         return Physics2D.OverlapBox((Vector2)transform.position + movementParams.groundCheckRect.position, movementParams.groundCheckRect.size, 0f, movementParams.groundMask);
     }
 
-    //Returns true if the player's health is 0
-    public bool IsDead()
-    {
-        return health <= 0;
-    }
-
     //Returns the direction the player is facing
     public FacingDirection GetFacingDirection()
     {
@@ -243,4 +355,48 @@ public class PlayerController : MonoBehaviour
     {
         return _prevFallingSpeed;
     }
+
+#if UNITY_EDITOR
+    void OnDrawGizmosSelected()
+    {
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        for (int i = 0; i < attack1Sprites.Length; i++)
+        {
+            if (_spriteRenderer.sprite == attack1Sprites[i])
+            {
+                DrawAttackFrameHitboxes(attack1Hitboxes, i);
+                return;
+            }
+        }
+        for (int i = 0; i < attack2Sprites.Length; i++)
+        {
+            if (_spriteRenderer.sprite == attack2Sprites[i])
+            {
+                DrawAttackFrameHitboxes(attack2Hitboxes, i);
+                return;
+            }
+        }
+    }
+
+    private void DrawAttackFrameHitboxes(AttackFrame[] attack, int frame)
+    {
+        foreach (AttackHitbox h in attack[frame].hitboxes)
+        {
+            float[] cornerAngles = {Mathf.Atan2(h.rect.size.y, h.rect.size.x),
+                                    Mathf.Atan2(h.rect.size.y, -h.rect.size.x),
+                                    Mathf.Atan2(-h.rect.size.y, -h.rect.size.x),
+                                    Mathf.Atan2(-h.rect.size.y, h.rect.size.x)};
+
+            Vector3[] hitboxCorners = new Vector3[cornerAngles.Length];
+            for (int i = 0; i < cornerAngles.Length; i++)
+            {
+                cornerAngles[i] += h.rotation * Mathf.Deg2Rad;
+                hitboxCorners[i] = transform.position + (Vector3)h.rect.position + new Vector3(Mathf.Cos(cornerAngles[i]), Mathf.Sin(cornerAngles[i])) * (h.rect.size.magnitude / 2);
+            }
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawLineStrip(hitboxCorners, true);
+        }
+    }
+#endif
 }

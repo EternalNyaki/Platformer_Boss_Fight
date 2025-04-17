@@ -3351,6 +3351,8 @@ GameObject:
   - component: {fileID: 743005531}
   - component: {fileID: 743005530}
   - component: {fileID: 743005529}
+  - component: {fileID: 743005536}
+  - component: {fileID: 743005535}
   - component: {fileID: 743005534}
   - component: {fileID: 743005533}
   - component: {fileID: 743005532}
@@ -3490,15 +3492,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _parentBlackboard: {fileID: 0}
-  _serializedBlackboard: '{"_variables":{"movementParams":{"_value":{"maxSpeed":7.0,"accelerationTime":0.01,"apexHeight":2.8,"apexTime":0.4,"terminalVelocity":20.0,"groundCheckRect":{"xMin":-0.03,"yMin":-0.2,"xMax":0.72,"yMax":0.2},"groundMask":{"value":8}},"_name":"movementParams","_id":"e7f30352-2188-4d5d-9f6e-f74071d3aa79","$type":"NodeCanvas.Framework.Variable`1[[PlatformerControllerParams,
+  _serializedBlackboard: '{"_variables":{"movementParams":{"_value":{"maxSpeed":8.0,"accelerationTime":0.01,"apexHeight":3.8,"apexTime":0.55,"terminalVelocity":20.0,"groundCheckRect":{"xMin":-0.03,"yMin":-0.2,"xMax":0.72,"yMax":0.2},"groundMask":{"value":8}},"_name":"movementParams","_id":"e7f30352-2188-4d5d-9f6e-f74071d3aa79","$type":"NodeCanvas.Framework.Variable`1[[PlatformerControllerParams,
     Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"mp":{"_value":100.0,"_name":"mp","_id":"238e208b-e6e7-4cf8-adb1-5875b8e4c265","$type":"NodeCanvas.Framework.Variable`1[[System.Single,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"destinationReachedThreshold":{"_value":0.25,"_name":"destinationReachedThreshold","_id":"bd316a33-dc93-40d2-b196-ddec425877e0","$type":"NodeCanvas.Framework.Variable`1[[System.Single,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"destination":{"_name":"destination","_id":"09803caf-b7f0-4c06-ad2b-57b9fca223d3","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Vector2,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},"destinationReachedTrigger":{"_name":"destinationReachedTrigger","_id":"ec47c507-9dee-413e-9d21-2a0bad06577d","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"calculatePathTrigger":{"_name":"calculatePathTrigger","_id":"41ddb0be-6670-4eb9-bc98-4fa77ec49d46","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"pathCalculationCompleteTrigger":{"_name":"pathCalculationCompleteTrigger","_id":"29967b07-4a21-4194-8dc0-8c7648b89a54","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
     mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}}}'
   _objectReferences: []
   _serializedVariables:
-  - _json: '{"_value":{"maxSpeed":7.0,"accelerationTime":0.01,"apexHeight":2.8,"apexTime":0.4,"terminalVelocity":20.0,"groundCheckRect":{"xMin":-0.03,"yMin":-0.2,"xMax":0.72,"yMax":0.2},"groundMask":{"value":8}},"_name":"movementParams","_id":"e7f30352-2188-4d5d-9f6e-f74071d3aa79","$type":"NodeCanvas.Framework.Variable`1[[PlatformerControllerParams,
+  - _json: '{"_value":{"maxSpeed":8.0,"accelerationTime":0.01,"apexHeight":3.8,"apexTime":0.55,"terminalVelocity":20.0,"groundCheckRect":{"xMin":-0.03,"yMin":-0.2,"xMax":0.72,"yMax":0.2},"groundMask":{"value":8}},"_name":"movementParams","_id":"e7f30352-2188-4d5d-9f6e-f74071d3aa79","$type":"NodeCanvas.Framework.Variable`1[[PlatformerControllerParams,
       Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
     _references: []
   - _json: '{"_value":100.0,"_name":"mp","_id":"238e208b-e6e7-4cf8-adb1-5875b8e4c265","$type":"NodeCanvas.Framework.Variable`1[[System.Single,
+      mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}'
+    _references: []
+  - _json: '{"_value":0.25,"_name":"destinationReachedThreshold","_id":"bd316a33-dc93-40d2-b196-ddec425877e0","$type":"NodeCanvas.Framework.Variable`1[[System.Single,
+      mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}'
+    _references: []
+  - _json: '{"_name":"destination","_id":"09803caf-b7f0-4c06-ad2b-57b9fca223d3","$type":"NodeCanvas.Framework.Variable`1[[UnityEngine.Vector2,
+      UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"}'
+    _references: []
+  - _json: '{"_name":"destinationReachedTrigger","_id":"ec47c507-9dee-413e-9d21-2a0bad06577d","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+      mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}'
+    _references: []
+  - _json: '{"_name":"calculatePathTrigger","_id":"41ddb0be-6670-4eb9-bc98-4fa77ec49d46","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
+      mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}'
+    _references: []
+  - _json: '{"_name":"pathCalculationCompleteTrigger","_id":"29967b07-4a21-4194-8dc0-8c7648b89a54","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
       mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}'
     _references: []
 --- !u!114 &743005534
@@ -3514,16 +3536,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _serializedExposedParameters: []
-  _boundGraphSerialization: '{"type":"NodeCanvas.BehaviourTrees.BehaviourTree","nodes":[{"_position":{"x":1146.763,"y":610.9673},"$type":"NodeCanvas.BehaviourTrees.Selector","$id":"0"},{"_action":{"attackData":{"data":[{"hitboxRect":{"xMin":0.0,"yMin":0.0,"xMax":50.0,"yMax":1.0}}]},"telegraphSpritePrefab":1,"attackSpritePrefab":2,"waitTime":2.0,"$type":"NodeCanvas.Tasks.Actions.ExecuteAttack_ACT"},"_position":{"x":1007.0,"y":821.0},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"1"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{}},"derivedData":{"repeat":true,"$type":"NodeCanvas.BehaviourTrees.BehaviourTree+DerivedSerializationData"}}'
-  _boundGraphObjectReferences:
-  - {fileID: 0}
-  - {fileID: 2540571666202319771, guid: 4436b9010889b3c44a6c93fbba5158aa, type: 3}
-  - {fileID: 7674432565610847086, guid: 90b4a98bd84599c459d8130079c9282f, type: 3}
+  _boundGraphSerialization: '{"type":"NodeCanvas.BehaviourTrees.BehaviourTree","nodes":[{"dynamic":true,"_position":{"x":1027.0,"y":928.2},"$type":"NodeCanvas.BehaviourTrees.Parallel","$id":"0"},{"repeaterMode":2,"repeatTimes":{"_value":1},"_position":{"x":877.6,"y":1120.6},"$type":"NodeCanvas.BehaviourTrees.Repeater","$id":"1"},{"_position":{"x":887.4,"y":1250.0},"$type":"NodeCanvas.BehaviourTrees.Sequencer","$id":"2"},{"_action":{"wanderRange":7.0,"destination":{"_name":"destination","_targetVariableID":"09803caf-b7f0-4c06-ad2b-57b9fca223d3"},"calculatePathTrigger":{"_name":"calculatePathTrigger","_targetVariableID":"41ddb0be-6670-4eb9-bc98-4fa77ec49d46"},"$type":"NodeCanvas.Tasks.Actions.Wander_ACT"},"_position":{"x":772.4,"y":1386.8},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"3"},{"_condition":{"trigger":{"_name":"destinationReachedTrigger","_targetVariableID":"ec47c507-9dee-413e-9d21-2a0bad06577d"},"$type":"NodeCanvas.Tasks.Conditions.CheckBooleanTrigger"},"_position":{"x":939.0,"y":1383.2},"$type":"NodeCanvas.BehaviourTrees.WaitUntil","$id":"4"},{"_action":{"waitTime":{"_value":2.0},"$type":"NodeCanvas.Tasks.Actions.Wait"},"_position":{"x":1020.2,"y":1519.4},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"5"},{"_action":{"movementParams":{"_name":"movementParams","_targetVariableID":"e7f30352-2188-4d5d-9f6e-f74071d3aa79"},"destinationReachedThreshold":{"_name":"destinationReachedThreshold","_targetVariableID":"bd316a33-dc93-40d2-b196-ddec425877e0"},"destination":{"_name":"destination","_targetVariableID":"09803caf-b7f0-4c06-ad2b-57b9fca223d3"},"calculatePathTrigger":{"_name":"calculatePathTrigger","_targetVariableID":"41ddb0be-6670-4eb9-bc98-4fa77ec49d46"},"pathCalculationCompleteTrigger":{"_name":"pathCalculationCompleteTrigger","_targetVariableID":"29967b07-4a21-4194-8dc0-8c7648b89a54"},"destinationReachedTrigger":{"_name":"destinationReachedTrigger","_targetVariableID":"ec47c507-9dee-413e-9d21-2a0bad06577d"},"$type":"NodeCanvas.Tasks.Actions.Navigate_ACT"},"_position":{"x":1137.8,"y":1124.0},"$type":"NodeCanvas.BehaviourTrees.ActionNode","$id":"6"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"6"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"3"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"},{"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"5"},"$type":"NodeCanvas.BehaviourTrees.BTConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{}},"derivedData":{"repeat":true,"$type":"NodeCanvas.BehaviourTrees.BehaviourTree+DerivedSerializationData"}}'
+  _boundGraphObjectReferences: []
   _boundGraphSource:
     _version: 3.31
     _category: 
     _comments: 
-    _translation: {x: -451, y: -485}
+    _translation: {x: -412, y: -893}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 0
@@ -3533,6 +3552,78 @@ MonoBehaviour:
   _updateMode: 0
   _graph: {fileID: 0}
   _blackboard: {fileID: 743005533}
+--- !u!61 &743005535
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743005528}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.21816301, y: 0.9419211}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0}
+    oldSize: {x: 7.5, y: 3.3333333}
+    newSize: {x: 1.8, y: 1.8}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1.0882196, y: 1.8838422}
+  m_EdgeRadius: 0
+--- !u!50 &743005536
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743005528}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
 --- !u!1 &755550205
 GameObject:
   m_ObjectHideFlags: 0
@@ -3916,7 +4007,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!50 &835025988
 Rigidbody2D:
   serializedVersion: 4
@@ -4089,7 +4180,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43b97f1d563ac0c479d1b22c83f6dec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 10
+  maxHealth: 0
+  disableControls: 0
   movementParams:
     maxSpeed: 0
     accelerationTime: 0
@@ -4106,6 +4198,10 @@ MonoBehaviour:
     groundMask:
       serializedVersion: 2
       m_Bits: 0
+  attack1Sprites: []
+  attack2Sprites: []
+  attack1Hitboxes: []
+  attack2Hitboxes: []
 --- !u!114 &835025994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7966,7 +8062,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43b97f1d563ac0c479d1b22c83f6dec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 10
+  maxHealth: 0
+  disableControls: 0
   movementParams:
     maxSpeed: 7
     accelerationTime: 0.1
@@ -7983,6 +8080,97 @@ MonoBehaviour:
     groundMask:
       serializedVersion: 2
       m_Bits: 8
+  attack1Sprites:
+  - {fileID: -7879541775824577086, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: -6442761953431332421, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: -7823500323640422531, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: 3272844186751121127, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: 8629003983396144442, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: -6211648682532063752, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: 4804923502247703499, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: -6253208296904073923, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  attack2Sprites:
+  - {fileID: -381468241496348146, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: -2164224423321271568, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: 7378919880078719499, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  - {fileID: -50406204238961237, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  attack1Hitboxes:
+  - hitboxes: []
+  - hitboxes: []
+  - hitboxes: []
+  - hitboxes: []
+  - hitboxes: []
+  - hitboxes:
+    - rect:
+        serializedVersion: 2
+        x: 1.52
+        y: 1.23
+        width: 1.6
+        height: 2.07
+      rotation: 0
+      damage: 10
+      knockback: {x: 2, y: 1}
+    - rect:
+        serializedVersion: 2
+        x: 0.45
+        y: 2.17
+        width: 2.83
+        height: 0.7
+      rotation: 0
+      damage: 10
+      knockback: {x: 2, y: 2}
+  - hitboxes:
+    - rect:
+        serializedVersion: 2
+        x: 1.52
+        y: 1.05
+        width: 1.6
+        height: 1.43
+      rotation: 0
+      damage: 10
+      knockback: {x: 2, y: 1}
+  - hitboxes:
+    - rect:
+        serializedVersion: 2
+        x: 1.2
+        y: 0.66
+        width: 1.59
+        height: 0.66
+      rotation: 0
+      damage: 10
+      knockback: {x: 1, y: 0.5}
+  attack2Hitboxes:
+  - hitboxes: []
+  - hitboxes:
+    - rect:
+        serializedVersion: 2
+        x: 1.1
+        y: 1.18
+        width: 1.94
+        height: 1.87
+      rotation: 0
+      damage: 20
+      knockback: {x: 2, y: 2}
+    - rect:
+        serializedVersion: 2
+        x: -0.14
+        y: 2.08
+        width: 4.03
+        height: 1.47
+      rotation: 0
+      damage: 20
+      knockback: {x: -2, y: 2}
+  - hitboxes:
+    - rect:
+        serializedVersion: 2
+        x: -1.05
+        y: 2.1
+        width: 1.48
+        height: 1.2
+      rotation: 0
+      damage: 20
+      knockback: {x: -2, y: 1}
+  - hitboxes: []
 --- !u!50 &1361604120
 Rigidbody2D:
   serializedVersion: 4
@@ -8047,7 +8235,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.4, y: 0.025}
     oldSize: {x: 4.3125, y: 2.75}
-    newSize: {x: 0.69, y: 0.44}
+    newSize: {x: 4.3125, y: 2.75}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -8117,12 +8305,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -3318188226485093758, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
+  m_Sprite: {fileID: -7879541775824577086, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.69, y: 0.44}
+  m_Size: {x: 4.3125, y: 2.75}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
