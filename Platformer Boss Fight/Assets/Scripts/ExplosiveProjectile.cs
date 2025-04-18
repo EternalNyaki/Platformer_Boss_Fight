@@ -30,6 +30,11 @@ public class ExplosiveProjectile : Projectile
             StartCoroutine(Explode());
         }
 
+        if (explosionTimer <= -5f)
+        {
+            Destroy(gameObject);
+        }
+
         explosionTimer -= Time.deltaTime;
     }
 

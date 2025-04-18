@@ -9582,7 +9582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43b97f1d563ac0c479d1b22c83f6dec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 50
+  maxHealth: 100
   disableControls: 0
   movementParams:
     maxSpeed: 7
@@ -9694,7 +9694,7 @@ MonoBehaviour:
   enemyMask:
     serializedVersion: 2
     m_Bits: 128
-  healthBar: {fileID: 0}
+  healthBar: {fileID: 1711460394}
 --- !u!50 &1361604120
 Rigidbody2D:
   serializedVersion: 4
