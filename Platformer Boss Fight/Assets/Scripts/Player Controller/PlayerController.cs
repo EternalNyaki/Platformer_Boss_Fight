@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.VisualScripting;
+using UnityEngine.UI;
+
 
 
 #if UNITY_EDITOR
@@ -30,6 +32,8 @@ public class PlayerController : DamagableObject
     public AttackFrame[] attack1Hitboxes;
     public AttackFrame[] attack2Hitboxes;
     public LayerMask enemyMask;
+
+    public Slider healthBar;
 
     //Vector for storing directional input
     private Vector2 _playerInput;
@@ -97,6 +101,8 @@ public class PlayerController : DamagableObject
         {
             _timeSinceLastGrounded = 0;
         }
+
+        healthBar.value = _health;
 
         AnimUpdate();
     }
@@ -264,7 +270,7 @@ public class PlayerController : DamagableObject
     {
         _rb2d.velocity = Vector2.zero;
         yield return new WaitUntil(GetEndOverrideCoroutine);
-        Application.Quit();
+        Destroy(gameObject);
     }
 
     public void Attack()
