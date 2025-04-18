@@ -1,18 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
+using NodeCanvas.BehaviourTrees;
 using UnityEngine;
 
-public class DamagableBTCharacter : MonoBehaviour
+public class DamagableBTCharacter : DamagableObject
 {
-    // Start is called before the first frame update
-    void Start()
+    private BehaviourTree _behaviourTree;
+
+    protected override void Initialize()
     {
-        
+        _behaviourTree = GetComponent<BehaviourTreeOwner>().behaviour;
+
+        base.Initialize();
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Hurt(int damage, Vector2 knockback)
     {
-        
+        BTCharacterHurtEventArgs eventArgs = new BTCharacterHurtEventArgs
+        {
+            damage = damage,
+            knockback = knockback
+        };
+
+        _behaviourTree.SendEvent("Hurt", eventArgs, this);
     }
+}
+
+[System.Serializable]
+public struct BTCharacterHurtEventArgs
+{
+    public int damage;
+    public Vector2 knockback;
 }

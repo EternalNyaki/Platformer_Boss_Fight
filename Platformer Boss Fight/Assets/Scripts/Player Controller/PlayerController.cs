@@ -29,6 +29,7 @@ public class PlayerController : DamagableObject
 
     public AttackFrame[] attack1Hitboxes;
     public AttackFrame[] attack2Hitboxes;
+    public LayerMask enemyMask;
 
     //Vector for storing directional input
     private Vector2 _playerInput;
@@ -50,6 +51,8 @@ public class PlayerController : DamagableObject
     private Coroutine _motionOverrideCoroutine = null;
     private bool _endOverrideCoroutineTrigger = false;
 
+    private List<GameObject> attackHits;
+
     private SpriteRenderer _spriteRenderer;
     private Animator _animator;
 
@@ -70,6 +73,8 @@ public class PlayerController : DamagableObject
         attackHash = Animator.StringToHash("attack");
         hitHash = Animator.StringToHash("hit");
         healthHash = Animator.StringToHash("health");
+
+        attackHits = new List<GameObject>();
     }
 
     // Update is called once per frame
@@ -242,11 +247,12 @@ public class PlayerController : DamagableObject
             ApplyGravity();
             yield return null;
         }
+
+        attackHits.Clear();
     }
 
     private IEnumerator HurtRoutine()
     {
-        //Apply knockback
         while (!GetEndOverrideCoroutine())
         {
             ApplyGravity();
@@ -285,12 +291,14 @@ public class PlayerController : DamagableObject
 
         foreach (AttackHitbox hbox in attackFrameHitboxes)
         {
-            foreach (Collider2D collider in Physics2D.OverlapBoxAll((Vector2)transform.position + new Vector2(hbox.rect.position.x * (int)_direction, hbox.rect.position.y), hbox.rect.size, hbox.rotation))
+            foreach (Collider2D collider in Physics2D.OverlapBoxAll((Vector2)transform.position + new Vector2(hbox.rect.position.x * (int)_direction, hbox.rect.position.y), hbox.rect.size, hbox.rotation, enemyMask))
             {
                 DamagableObject dobj = collider.GetComponent<DamagableObject>();
-                if (dobj != null && collider.gameObject != gameObject)
+                if (dobj != null && collider.gameObject != gameObject && !attackHits.Contains(dobj.gameObject))
                 {
                     dobj.Hurt(hbox.damage, new Vector2(hbox.knockback.x * (int)_direction, hbox.knockback.y));
+
+                    attackHits.Add(dobj.gameObject);
                 }
             }
         }

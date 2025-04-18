@@ -14,6 +14,8 @@ namespace NodeCanvas.Tasks.Actions
 		public BBParameter<float> destinationReachedThreshold;
 
 		public BBParameter<Vector2> destination;
+		public BBParameter<bool> disableGravity;
+
 		public BBParameter<bool> calculatePathTrigger;
 		public BBParameter<bool> pathCalculationCompleteTrigger;
 		public BBParameter<bool> destinationReachedTrigger;
@@ -46,7 +48,7 @@ namespace NodeCanvas.Tasks.Actions
 
 			_rb2d = agent.GetComponent<Rigidbody2D>();
 			_navAgent = agent.GetComponent<Seeker>();
-			_spriteRenderer = agent.GetComponent<SpriteRenderer>();
+			_spriteRenderer = agent.GetComponentInChildren<SpriteRenderer>();
 			_animator = agent.GetComponent<Animator>();
 
 			_xMovementHash = Animator.StringToHash("xMovement");
@@ -202,7 +204,7 @@ namespace NodeCanvas.Tasks.Actions
 		private void VerticalMovement(float verticalInput, ref float yVelocity)
 		{
 			//Calculate gravity
-			yVelocity = Mathf.Clamp(yVelocity + movementParams.value.gravity * Time.deltaTime, -movementParams.value.terminalVelocity, float.PositiveInfinity);
+			yVelocity = disableGravity.value ? 0f : Mathf.Clamp(yVelocity + movementParams.value.gravity * Time.deltaTime, -movementParams.value.terminalVelocity, float.PositiveInfinity);
 
 			if (verticalInput > 0f && IsGrounded())
 			{
@@ -224,16 +226,6 @@ namespace NodeCanvas.Tasks.Actions
 		private void AnimUpdate()
 		{
 			float xMovement = Mathf.Abs(_rb2d.velocity.x);
-
-			//Change facing direction
-			if (_rb2d.velocity.x > 0.01f)
-			{
-				_direction = PlayerController.FacingDirection.right;
-			}
-			else if (_rb2d.velocity.x < -0.01f)
-			{
-				_direction = PlayerController.FacingDirection.left;
-			}
 
 			//Flip the player sprite based on facing direction
 			switch (_direction)

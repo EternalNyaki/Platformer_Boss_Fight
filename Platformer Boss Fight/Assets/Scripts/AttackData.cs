@@ -5,13 +5,25 @@ using UnityEngine;
 [System.Serializable]
 public class AttackData
 {
-    public Dictionary<float, AttackHitbox> data;
+    public AttackHitboxWithTiming[] data;
 }
 
 [System.Serializable]
 public struct AttackFrame
 {
     public AttackHitbox[] hitboxes;
+}
+
+[System.Serializable]
+public struct AttackHitboxWithTiming
+{
+    public float timing;
+    public AttackHitbox hitbox;
+
+    public static implicit operator AttackHitbox(AttackHitboxWithTiming h)
+    {
+        return h.hitbox;
+    }
 }
 
 [System.Serializable]
