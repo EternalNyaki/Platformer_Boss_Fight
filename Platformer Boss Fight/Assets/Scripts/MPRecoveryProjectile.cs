@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class MPRecoveryProjectile : Projectile
 {
-    protected override void OnHitCharacter(DamagableObject dobj)
+    protected override void OnHitCharacter(Damagable dobj)
     {
         base.OnHitCharacter(dobj);
 

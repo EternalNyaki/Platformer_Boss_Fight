@@ -22,7 +22,7 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        DamagableObject dobj = collision.GetComponent<DamagableObject>();
+        Damagable dobj = collision.GetComponent<Damagable>();
 
         if (dobj != null)
         {
@@ -32,7 +32,7 @@ public class Projectile : MonoBehaviour
         DestroySelf();
     }
 
-    protected virtual void OnHitCharacter(DamagableObject dobj)
+    protected virtual void OnHitCharacter(Damagable dobj)
     {
         if (dobj.gameObject.name == "Player")
         {

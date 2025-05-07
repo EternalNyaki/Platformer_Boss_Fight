@@ -32,6 +32,7 @@ namespace NodeCanvas.Tasks.Actions
 			Vector2 vectorToTarget = target.value.position - agent.transform.position;
 
 			_spriteRenderer.flipX = vectorToTarget.x < 0f;
+			Debug.Log(_spriteRenderer.flipX);
 
 			GameObject.Instantiate(projectilePrefab.value, (Vector2)agent.transform.position + new Vector2(_spriteRenderer.flipX ? -2f : 2f, 1.5f), Quaternion.Euler(0f, 0f, Mathf.Atan2(vectorToTarget.y, vectorToTarget.x) * Mathf.Rad2Deg));
 

@@ -54,7 +54,7 @@ namespace NodeCanvas.Tasks.Actions
 			{
 				foreach (Collider2D collider in Physics2D.OverlapBoxAll(rootPosition.value + hbox.rect.position, hbox.rect.size, hbox.rotation, attackMask.value))
 				{
-					DamagableObject dobj = collider.GetComponent<DamagableObject>();
+					Damagable dobj = collider.GetComponent<Damagable>();
 					if (dobj != null && collider.gameObject != agent)
 					{
 						dobj.Hurt(hbox.damage, hbox.knockback);

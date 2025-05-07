@@ -5,7 +5,7 @@ using NodeCanvas.Framework;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DamagableBTCharacter : DamagableObject
+public class DamagableBTCharacter : Damagable
 {
     public Slider hpBar;
     public Slider mpBar;

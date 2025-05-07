@@ -10,7 +10,7 @@ using UnityEngine.UI;
 using UnityEditor;
 #endif
 
-public class PlayerController : DamagableObject
+public class PlayerController : Damagable
 {
     /// <summary>
     /// Describes the direction the player is facing
@@ -102,7 +102,7 @@ public class PlayerController : DamagableObject
             _timeSinceLastGrounded = 0;
         }
 
-        healthBar.value = _health;
+        healthBar.value = currentHealth;
 
         AnimUpdate();
     }
@@ -132,7 +132,7 @@ public class PlayerController : DamagableObject
         _animator.SetFloat(yMovementHash, _rb2d.velocity.y);
         _animator.SetBool(groundedHash, IsGrounded());
         if (_attackInput) { _animator.SetTrigger(attackHash); }
-        _animator.SetInteger(healthHash, _health);
+        _animator.SetInteger(healthHash, currentHealth);
 
         //Flip the player sprite based on facing direction
         switch (GetFacingDirection())
@@ -299,7 +299,7 @@ public class PlayerController : DamagableObject
         {
             foreach (Collider2D collider in Physics2D.OverlapBoxAll((Vector2)transform.position + new Vector2(hbox.rect.position.x * (int)_direction, hbox.rect.position.y), hbox.rect.size, hbox.rotation, enemyMask))
             {
-                DamagableObject dobj = collider.GetComponent<DamagableObject>();
+                Damagable dobj = collider.GetComponent<Damagable>();
                 if (dobj != null && collider.gameObject != gameObject && !attackHits.Contains(dobj.gameObject))
                 {
                     dobj.Hurt(hbox.damage, new Vector2(hbox.knockback.x * (int)_direction, hbox.knockback.y));

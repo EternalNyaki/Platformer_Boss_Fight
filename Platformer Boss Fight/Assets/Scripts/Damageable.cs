@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DamagableObject : MonoBehaviour
+public class Damagable : MonoBehaviour
 {
     public int maxHealth;
 
-    protected int _health;
+    public int currentHealth { get; protected set; }
 
     protected Rigidbody2D _rb2d;
 
@@ -19,13 +19,13 @@ public class DamagableObject : MonoBehaviour
     {
         _rb2d = GetComponent<Rigidbody2D>();
 
-        _health = maxHealth;
+        currentHealth = maxHealth;
     }
 
     public virtual void Hurt(int damage, Vector2 knockback)
     {
-        _health -= damage;
-        if (_health <= 0) { Die(); }
+        currentHealth -= damage;
+        if (currentHealth <= 0) { Die(); }
 
         _rb2d.velocity = knockback;
     }
